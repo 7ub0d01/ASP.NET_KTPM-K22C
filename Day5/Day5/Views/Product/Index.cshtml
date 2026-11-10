@@ -1,0 +1,93 @@
+﻿@model IEnumerable<Day5.Models.ProductViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    string search = ViewData["Search"] as string ?? "";
+    string orderBy = ViewData["OrderBy"] as string ?? "Id";
+    bool dsc = (bool)(ViewData["Dsc"] ?? false);
+    int page = (int)(ViewData["Page"] ?? 1);
+    int pages = (int)(ViewData["Pages"] ?? 1);
+    int total = (int)(ViewData["Total"] ?? 0);
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+
+<form asp-action="Index" method="get">
+    <input type="text" name="search" value="@search" placeholder="Tìm theo tên, danh mục..." />
+    <input type="hidden" name="orderBy" value="@orderBy" />
+    <input type="hidden" name="dsc" value="@dsc" />
+    <button type="submit">Search</button>
+    @if (!string.IsNullOrEmpty(search))
+    {
+        <a asp-action="Index">Xóa tìm kiếm</a>
+    }
+</form>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="Id" asp-route-dsc="@ViewData["IdSort"]" asp-route-page="1">Id @(orderBy == "Id" ? (dsc ? "↓" : "↑") : "")</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="ProductName" asp-route-dsc="@ViewData["ProductNameSort"]" asp-route-page="1">ProductName @(orderBy == "ProductName" ? (dsc ? "↓" : "↑") : "")</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="ProductPrice" asp-route-dsc="@ViewData["ProductPriceSort"]" asp-route-page="1">ProductPrice @(orderBy == "ProductPrice" ? (dsc ? "↓" : "↑") : "")</a>
+            </th>
+            <th>
+                <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="CategoryName" asp-route-dsc="@ViewData["CategoryNameSort"]" asp-route-page="1">CategoryName @(orderBy == "CategoryName" ? (dsc ? "↓" : "↑") : "")</a>
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ProductPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CategoryName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div>
+    Trang @(page) / @(pages) - Tổng: @total sản phẩm
+    @if (page > 1)
+    {
+        <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="@orderBy" asp-route-dsc="@dsc" asp-route-page="1">« Đầu</a>
+        <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="@orderBy" asp-route-dsc="@dsc" asp-route-page="@(page - 1)">‹ Trước</a>
+    }
+    @if (page < pages)
+    {
+        <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="@orderBy" asp-route-dsc="@dsc" asp-route-page="@(page + 1)">Sau ›</a>
+        <a asp-action="Index" asp-route-search="@search" asp-route-orderBy="@orderBy" asp-route-dsc="@dsc" asp-route-page="@pages">Cuối »</a>
+    }
+    <form asp-action="Index" method="get" style="display:inline">
+        <input type="hidden" name="search" value="@search" />
+        <input type="hidden" name="orderBy" value="@orderBy" />
+        <input type="hidden" name="dsc" value="@dsc" />
+        Go to page <input type="number" name="page" min="1" max="@pages" value="@(page)" />
+        <input type="submit" value="Go" />
+    </form>
+</div>
